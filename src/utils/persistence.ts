@@ -1,3 +1,4 @@
+
 type Persistence = {
   setItem(key: string, value: string): Promise<void>;
   getItem(key: string): Promise<string | null>;
@@ -5,17 +6,31 @@ type Persistence = {
   clear(): Promise<void>;
 };
 
-export const persistence: Persistence = {
-  setItem(key, value) {
-    return window.persistentStorage.setItem(key, value);
+const memoryPersistence: Persistence = {
+  async setItem(key, value) {
+    inMemoryStore.set(key, value);
   },
-  getItem(key) {
-    return window.persistentStorage.getItem(key);
+  async getItem(key) {
+    return inMemoryStore.has(key) ? inMemoryStore.get(key)! : null;
   },
-  removeItem(key) {
-    return window.persistentStorage.removeItem(key);
+  async removeItem(key) {
+    inMemoryStore.delete(key);
   },
-  clear() {
-    return window.persistentStorage.clear();
+  async clear() {
+    inMemoryStore.clear();
   },
 };
+
+const inMemoryStore = new Map<string, string>();
+
+let backend: Persistence = memoryPersistence;
+
+if (typeof window !== 'undefined' && window.persistentStorage) {
+  backend = window.persistentStorage;
+} else if (typeof window !== 'undefined') {
+  console.warn(
+    'window.persistentStorage is unavailable in this environment. Drafts will only persist for this session.'
+  );
+}
+
+export const persistence: Persistence = backend;
