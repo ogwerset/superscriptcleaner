@@ -1,9 +1,24 @@
+
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import App from './App';
+import { ensurePersistentStorage } from './utils/setupPersistentStorage';
 
 const container = document.getElementById('app');
-if (container) {
+
+async function bootstrap() {
+  try {
+    await ensurePersistentStorage();
+  } catch (error) {
+    console.warn('Continuing without persistent storage initialization.', error);
+  }
+
+  const AppModule = await import('./App');
+  const App = AppModule.default;
+
+  if (!container) {
+    throw new Error('Root container #app was not found in the document.');
+  }
+
   const root = createRoot(container);
   root.render(
     <React.StrictMode>
@@ -11,3 +26,7 @@ if (container) {
     </React.StrictMode>
   );
 }
+
+bootstrap().catch((error) => {
+  console.error('Failed to bootstrap Superscript Cleaner.', error);
+});

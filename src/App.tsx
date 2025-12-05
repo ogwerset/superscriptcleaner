@@ -1,7 +1,9 @@
 
+
 import React from 'react';
 import './App.css';
 import TextConversionTool from './features/converter/TextConversionTool';
+import HostingChecklist from './features/hosting/HostingChecklist';
 
 function App() {
   return (
@@ -17,6 +19,7 @@ function App() {
 
       <main className="main-content">
         <TextConversionTool />
+        <HostingChecklist />
       </main>
 
       <footer className="app-footer">
@@ -29,3 +32,4 @@ function App() {
 }
 
 export default App;
+

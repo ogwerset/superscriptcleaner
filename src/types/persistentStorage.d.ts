@@ -9,5 +9,6 @@ declare global {
       removeItem(key: string): Promise<void>;
       clear(): Promise<void>;
     };
+    __persistenceBackend?: 'native' | 'indexedDB' | 'memory';
   }
 }
